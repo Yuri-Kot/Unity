@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class T90move : MonoBehaviour
+public class MoveGameObjectTrigger : MonoBehaviour
 {
     [SerializeField] private Transform target;
     [SerializeField] private float t;
@@ -13,6 +13,11 @@ public class T90move : MonoBehaviour
     {
         enteredTrigger = true;
         Debug.Log("Trigger activated");
+        
+             //Lerp & Move towards mix - best visuals
+     //       Vector3 a = transform.position;
+     //       Vector3 b = target.position;
+     //       transform.position = Vector3.MoveTowards(a, Vector3.Lerp(a, b, t), speed);
     }
 
     private void FixedUpdate()
@@ -44,4 +49,3 @@ public class T90move : MonoBehaviour
     }
 
 }
-//x 18, y 4.72, z 0.69
