@@ -1,0 +1,79 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FoxController : MonoBehaviour
+{
+    [SerializeField] private AudioClip jumpSoundEffect = null;
+    [SerializeField] private AudioSource runSoundEffect;
+
+    private Rigidbody _rigidbody;
+    private Animator _animator;
+    private float speedMultipier = 5;
+    private bool jump;
+    private float jumpForce = 7;
+    private bool isGrounded;
+    private float horizontalInput;
+    private float speed;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        horizontalInput = Input.GetAxis("Horizontal");
+
+//BUG        //Face forward - this causes playermodel to always face camera (using z axis) after horizontal (x axis) movement stops
+//I want playermodel to keep facing the direction it was moving into.
+//Or best - turn to the camera-facing idle animation only after 5-10sec of no player input.
+        transform.forward = new Vector3(horizontalInput, 0, (Mathf.Abs(horizontalInput) - 1));
+
+        //Move animation and sound
+        _animator.SetFloat("Speed", horizontalInput);
+
+        //Set animator isgrounded
+        _animator.SetBool("IsGrounded", isGrounded);
+
+        //Capture jump key pressed (must be in update, not fixed update
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            jump = true;
+        }
+    }
+
+    //updates every physics update (100 Hz)
+    private void FixedUpdate()
+    {
+        //Move
+        float horizontal = Input.GetAxis("Horizontal");
+        _rigidbody.velocity = new Vector3(horizontal * speedMultipier, _rigidbody.velocity.y, 0);
+
+        //is grounded
+        isGrounded = Physics.OverlapBox(_rigidbody.position, Vector3.one * 0.3f).Length > 2;
+
+        //Parameter for jump/fall blend animation
+        _animator.SetFloat("VerticalSpeed", _rigidbody.velocity.y);
+
+        //Jump
+    if (jump && isGrounded)
+        {
+            _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, jumpForce, 0);
+            jump = false;
+            if (jumpSoundEffect != null)
+            {
+                AudioSource.PlayClipAtPoint(jumpSoundEffect, transform.position, 0.5f); //Snd volume is last float number
+            }
+        }
+    }
+
+    //Footsteps sound associated with run animation
+    private void Step()
+    {
+        runSoundEffect.Play();
+    }
+}
