@@ -1,0 +1,35 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MoveGameObject : MonoBehaviour
+{
+    [SerializeField] private Transform target;
+    [SerializeField] private float t;
+    [SerializeField] private float speed;
+    private bool enteredTrigger = false;
+
+    private void FixedUpdate()
+    { 
+            Debug.Log("Movement activated");
+
+            //Teleport
+            //       transform.position = target.position;
+
+            //Lerp (smooth motion, non-constant speed)
+            //       Vector3 a = transform.position;
+            //       Vector3 b = target.position;
+            //       transform.position = Vector3.Lerp(a, b, t);
+
+            //Move towards (constant speed, non-smooth)
+                   Vector3 a = transform.position;
+                   Vector3 b = target.position;
+                   transform.position = Vector3.MoveTowards(a, b, speed);
+
+            //Lerp & Move towards mix - best visuals
+     //       Vector3 a = transform.position;
+     //       Vector3 b = target.position;
+     //       transform.position = Vector3.MoveTowards(a, Vector3.Lerp(a, b, t), speed);
+        
+    }
+}
